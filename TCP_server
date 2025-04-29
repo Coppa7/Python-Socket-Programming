@@ -1,0 +1,32 @@
+from socket import *
+
+server_port = 12000
+
+# Apro prima la welcome socket
+welcome_socket = socket(AF_INET, SOCK_STREAM)
+
+# Devo associare la welcome socket al numero di porta che conoscono anche i client tramite bind()
+
+welcome_socket.bind(('', server_port))
+
+# Mi metto in ascolto per un client
+
+welcome_socket.listen(1)  # 1 indica la coda, quanti client possono connettersi
+while True:
+    connection_socket, client_address = welcome_socket.accept()
+    # Questa è una funzione bloccante, si sblocca quando arriva un connect (anche dalla coda)
+    # 2 parametri di ritorno, una nuova socket e l'indirizzo
+    print("Il client ", client_address, " si è connesso.")
+
+    # Leggo dalla nuova socket
+
+    client_message = connection_socket.recv(2048)
+    client_message_decoded = client_message.decode('utf-8')
+
+    print("Ho ricevuto il messaggio ", client_message_decoded)
+    modified_message = client_message_decoded.upper()
+    connection_socket.send(modified_message.encode('utf-8'))
+
+    # Connessione non persistente, prossimo esercizio persistente cambiano sia il client che il server
+
+    connection_socket.close()
