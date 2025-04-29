@@ -1,0 +1,26 @@
+from socket import *
+import threading
+
+def connectionHandler(connection_socket):
+    n_char = 10
+    while n_char >= 0:
+        response = connection_socket.recv(2048)
+        c_read = len(response.decode('utf-8'))
+        n_char = n_char - c_read
+        if c_read != 0:
+            print(c_read)
+    connection_socket.close()
+
+
+
+server_port = 12001
+welcome_socket = socket(AF_INET, SOCK_STREAM)
+welcome_socket.bind(('', server_port))
+welcome_socket.listen(1)
+
+while True:
+    print("Il server è in ascolto")
+    connection_socket, client_address = welcome_socket.accept()
+    print("Connessione eseguita col client: " + str(client_address))
+    thread = threading.Thread(target=connectionHandler, args=(connection_socket, ))
+    thread.start()
