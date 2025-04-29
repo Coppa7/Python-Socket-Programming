@@ -1,0 +1,48 @@
+from socket import *
+import threading
+'''
+Per usare la connessione in parallelo utilizziamo il paradigma di Multithreading: ci sono vari modi.
+Questo implica l'usare N thread per N connessioni.
+Un altro modo si può usare un intero processo per la macchina
+Un altro ancora è che un solo worker gestisce più connessioni
+(Vedi spiegazioni/definizioni su slide).
+Il codice client rimane uguale in questo caso.
+'''
+
+
+server_port = 12001
+welcome_socket = socket(AF_INET, SOCK_STREAM)
+welcome_socket.bind(('', server_port))
+welcome_socket.listen(1)
+# La funzione client handler gestisce il singolo client
+
+
+def client_handler(connection_socket):
+    while True:
+        richiesta = connection_socket.recv(2048)
+        richiesta_decoded = richiesta.decode('utf-8')
+        if richiesta_decoded == '.':
+            break
+        modified_richiesta = richiesta_decoded.upper()
+        # La connection send è già collegata al mio client!
+        connection_socket.send(modified_richiesta.encode('utf-8'))
+
+
+# Mi metto in ascolto per più client
+while True:
+    connection_socket, client_address = welcome_socket.accept()
+    print("Client ", client_address, " connesso")
+    # Voglio gestire un client per ogni thread. La variabile thread è un gestore del client (in parallelo)
+    thread = threading.Thread(target = client_handler, args = (connection_socket, ))
+    # Client handler gestisce il singolo client
+    thread.start()
+    # Qui il processo principale non si blocca nonostante tutto ciò che avviene in client handler (dove ci potrebbero
+    # essere funzioni bloccanti). Subito dopo mi rimetto quindi all'inizio del while (nell'accept), e leggo la coda.
+
+
+
+
+
+
+
+
