@@ -1,0 +1,26 @@
+import requests
+import matplotlib.pyplot as plt
+import random
+
+siti = ["http://www.polimi.it", "http://www.amazon.it", "http://www.google.com"]
+colori = ["blue", "red", "yellow", "green", "purple", "orange", "brown", "light blue", "black"]
+
+n_richieste = 10 #30 totale richieste
+
+plt.figure()
+
+for sito in siti:     #for variabile in lista
+    tempi = [] #reset della lista dei tempi di ogni sito
+    for _ in range(n_richieste):
+        r = requests.get(sito)
+        tempi.append(r.elapsed.microseconds / 1000)
+    plt.plot(tempi, label = sito, color = random.choice(colori))
+    tempo_minimo = min(tempi)
+    print("Tempo minimo del sito " + sito + ": " + str(tempo_minimo) + "ms\n")
+    # in generale la , nel print separa con gli spazi ma il + no
+
+plt.grid()
+plt.title("Tempi di richiesta dei siti")
+plt.legend()
+plt.show()
+
