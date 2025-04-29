@@ -1,0 +1,25 @@
+from socket import *
+
+server_name = 'localhost'
+server_port = 12001
+
+client_socket = socket(AF_INET, SOCK_STREAM)
+print("Provo a connettermi")
+client_socket.connect((server_name, server_port))
+print("Client connesso")
+
+# Ciclo che termina all'inserimento del punto (la connessione è terminata col punto)
+
+while True:
+    message = input("Inserisci stringa (Termina connessione col '.'): ")
+    client_socket.send(message.encode('utf-8'))
+    # Ci serve una condizione per terminare il ciclo una volta inserito il .
+    # Questa condizione fa si che il server non risponda nemmeno
+    if message == '.':
+        break
+    response = client_socket.recv(2048)
+    print(response.decode('utf-8'))
+
+# Ovviamente chiudo fuori dal ciclo (dopo aver inserito .)
+client_socket.close()  # Il server chiude la socket di conseguenza
+print("Connessione chiusa")
