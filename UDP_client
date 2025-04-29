@@ -1,0 +1,54 @@
+# Codice client UDP
+
+from socket import *
+
+# cosa cambia in questo modo? Diciamo di importare tutto della libreria socket, perchè al suo interno la libreria socket
+# ha una classe con nome "socket".
+
+
+# Ora bisogna definire le generalità del server che vogliamo contattare (nel nostro caso sarà un IP locale, un server
+# locale, cioè 127.0.0.1)
+
+server_name = 'localhost'
+server_port = 12000  # qui possiamo inserire una qualsiasi porta generica, basta che non sia già riservata
+
+# Che succede se inserisco ad esempio 120001? (cioè una porta non esistente?). Non ricevo alcuna risposta,
+# ma per capire cosa succede, posso ricevere dei messaggi d'errore (altrimenti il client ascolterebbe all'infinito.
+# Si usa il codice try except, settimeout(timeout in secondi)
+# mettiamo il timeout prima della recvfrom perchè è una funzione bloccante
+
+# Ora apriamo una socket lato client, definendo una variabile socket
+
+client_socket = socket(AF_INET, SOCK_DGRAM)
+# Parametri ingresso: tipo indirizzo (IPv4), protocollo trasporto (UDP)
+
+message = input("Inserire stringa: ")
+# questa funzione blocca il programma in attesa dell'input utente
+
+# ora dobbiamo inviare il messaggio al server
+message = message.encode('utf-8')
+client_socket.sendto(message, (server_name, server_port))
+
+# Il primo parametro va convertito in byte, perciò usiamo la funzione encode
+# Il secondo parametro è una tupla, un vettore non modificabile, sarebbe la socket server
+# Nel caso UDP usiamo sendto perchè dobbiamo specificare l'indirizzo, altrimenti usiamo send
+
+# Ricezione risposta
+
+response, serverAddress = client_socket.recvfrom(1024)
+# anche response ora è in byte, dobbiamo convertirla in stringa
+response = response.decode('utf-8')
+
+print("Risposta server: " + response)
+
+# Serve il limite di byte massimi che la funzione può ricevere (buffer_size)
+# Anche la funzione recvfrom() è bloccante, il programma si blocca in attesa di una risposta
+
+# Chiusura socket
+
+client_socket.close()
+
+# In generale i numeri di porta dei socket client cambiano perchè non abbiamo svolto l'operazione di binding
+# Il client prende una qualsiasi porta libera entro un range di porte libere
+
+
