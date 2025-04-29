@@ -1,0 +1,46 @@
+import requests
+import matplotlib.pyplot as plt
+
+sito = "http://www.polimi.it"
+
+tempi = []
+
+for _ in range(10):
+    r = requests.get(sito)
+    tempo_risposta = r.elapsed.microseconds / 1000
+    tempi.append(tempo_risposta)
+
+tempo_medio = sum(tempi) / len(tempi)
+tempo_minimo = min(tempi)
+tempo_massimo = max(tempi)
+
+print("Tempo massimo: ", tempo_massimo, "ms\n")
+print("Tempo medio: ", tempo_medio, "ms\n")
+print("Tempo minimo: ", tempo_minimo, "ms\n")
+
+#Creiamo il grafico, la prima funzione definisce la figura
+
+plt.figure()
+plt.title("Valutazione tempi di risposta", size = 25)
+plt.xlabel("ID richiesta") #cosa c'è sull'asse x
+plt.ylabel("Tempo (ms)")
+plt.axhline(tempo_medio, color = "red", label = "tempo medio") #linea orizzontale all'altezza del parametro inserito
+plt.axvline(5, color = "#c6fc03", label = "ID>=5")  #linea verticale dell'ID 5
+plt.grid()
+plt.plot(tempi, color = "purple", label = "tempi risposta") #rappresento con un grafico a linea una lista di valori
+#abbiamo inserito i colori, ma sul grafico non si legge cosa sono... per questo usiamo i label
+#bisogna mostrare la legenda di questi label
+
+plt.xlim([0, 6]) #taglia l'asse x
+plt.ylim([tempo_minimo, tempo_massimo])
+plt.legend(loc = 1, fontsize = 10) #loc = 1, alto a destra, loc = 2 basso a destra ecc.? su documentazione
+plt.show()  #mostra a schermo la figura creata
+
+
+
+
+#tutto ciò oltre questa funzione non viene mostrato!
+#dovrei usare una nuova show pure se uso un nuovo plot
+
+#il programma rimane in esecuzione finchè non chiudo il grafico (se lo metto in background sta sull'icona di Pycharm)
+#alla chiusura, non ritorna il codice di ritorno perchè il programma è stato interrotto bruscamente dopo lo show
