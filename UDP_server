@@ -1,0 +1,39 @@
+# Codice lato server
+
+from socket import *
+
+# Bisogna ora definire le generalità, che devono essere le stesse usate del client
+
+server_port = 12000
+
+# Qui potremmo controllare se la porta è libera da terminale
+# Si usa netstat -aut
+
+# Apertura socket lato server
+
+server_socket = socket(AF_INET, SOCK_DGRAM)
+
+# Bisogna eseguire un operazione di binding della socket all'indirizzo del server
+
+server_socket.bind(('', server_port))
+
+# La stringa è vuota perchè l'ip è locale
+
+print("Server pronto")
+
+# Il server deve rimanere costantemente in ascolto sulla socket, quindi si usa un ciclo infinito
+
+while True:
+    message, client_address = server_socket.recvfrom(2048)
+    # Se ricevo più richieste, entrano in una coda
+    print("Ricevuta una richiesta da: ", client_address)
+    # è essenziale salvare il valore dell'indirizzo client perchè solo ora il server lo può imparare
+    message = message.decode('utf-8')
+    # Elaborazione stringa
+    modified_message = message.upper()
+    modified_message = modified_message.encode('utf-8')
+    server_socket.sendto(modified_message, client_address)
+
+#Il server non ha una chiusura socket (d'altronde, il ciclo è infinito)
+
+
