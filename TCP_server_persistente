@@ -1,0 +1,30 @@
+from socket import *
+
+server_port = 12001
+welcome_socket = socket(AF_INET, SOCK_STREAM)
+welcome_socket.bind(('', server_port))
+
+welcome_socket.listen(1)
+
+while True:
+    connection_socket, client_address = welcome_socket.accept()
+    print("Il client ", client_address, " si è connesso")
+
+    # La connessione è persistente, quindi uso un altro ciclo
+    while True:
+        client_message = connection_socket.recv(2048)
+        decoded_message = client_message.decode('utf-8')
+        if decoded_message == '.':
+            break
+        modified_message = decoded_message.upper()
+        connection_socket.send(modified_message.encode('utf-8'))
+
+    connection_socket.close()
+    print("Connessione col client ", client_address, " terminata.")
+
+# Non c'è nulla che fa terminare il ciclo quindi non ha senso!
+welcome_socket.close()
+
+# Con questo codice, un singolo client blocca il server, non c'è parallelismo dal server...
+# Dobbiamo dare significato alla coda data da listen
+# Vedi esercizio slide 3.2
