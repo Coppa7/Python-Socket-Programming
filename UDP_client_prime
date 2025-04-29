@@ -1,0 +1,25 @@
+from socket import *
+
+
+server_name = 'localhost'
+server_port = 12000
+
+client_socket = socket(AF_INET, SOCK_DGRAM)
+client_socket.settimeout(5)
+
+message = input("Inserisci numero: ")
+client_socket.sendto(message.encode('utf-8'), (server_name, server_port))
+
+try:
+    response, server_address = client_socket.recvfrom(2048)
+    if response.decode('utf-8') == '1':
+        print("Il numero è primo")
+    else:
+        print("Il numero non è primo")
+except timeout:
+    print("Server non raggiungibile: Timeout scaduto")
+except:
+    print("Server non raggiungibile")
+
+client_socket.close()
+
