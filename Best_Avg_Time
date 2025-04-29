@@ -1,0 +1,44 @@
+import requests
+import matplotlib.pyplot as plt
+
+def media(list):
+    return sum(list)/len(list)
+
+
+siti = ['http://www.google.com', 'http://www.youtube.com', 'http://www.polimi.it', 'http://www.wikipedia.org', 'http://www.amazon.com', 'http://www.twitter.com']
+colori = ['red', 'blue', 'yellow', 'green', 'black', 'pink']
+color_idx = 0
+avg_times = []
+n_richieste = 10
+
+plt.figure()
+
+for sito in siti:
+    tempi = []
+    for _ in range(n_richieste):
+        r = requests.get(sito)
+        tempi.append(r.elapsed.microseconds / 1000)
+
+    plt.plot(tempi, label=sito, color=colori[color_idx])
+    color_idx += 1
+
+    avg_times.append(media(tempi))
+
+best_avg = avg_times[0]
+for time in avg_times:  # Ricerca del tempo medio migliore
+    print(siti[avg_times.index(time)], ': ', str(time))
+    if time < best_avg:
+        best_avg = time
+
+print("Il miglior sito è: ", siti[avg_times.index(best_avg)])
+plt.title("Tempi di risposta")
+plt.xlabel("# Richiesta")
+plt.ylabel("Tempo")
+plt.xlim([0, 10])
+plt.ylim([0, 250])
+plt.axhline(best_avg, label="Tempo medio migliore", color="purple")
+plt.legend(loc=1, fontsize=10)
+plt.grid()
+plt.show()
+
+
